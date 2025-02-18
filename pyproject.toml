@@ -1,0 +1,21 @@
+[project]
+name = "trace-encoder-pure"
+version = "1.0.0"
+description = "🐍Lightweight OTEL span to binary converter, no deps, pure Python🐍"
+requires-python = ">=3.8"
+classifiers = [
+    # FIXME Pure Python
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pyright ~= 1.1",
+]
+testing = [
+    "pytest ~= 8.3.4",
+    "opentelemetry-api ~= 1.30",  # Fixes older Python type hints
+    "opentelemetry-exporter-otlp-proto-http ~= 1.30",  # equivalence tests
+]
