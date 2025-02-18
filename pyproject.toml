@@ -1,7 +1,7 @@
 [project]
 name = "trace-encoder-pure"
 version = "1.0.0"
-description = "🐍Lightweight OTEL span to binary converter, no deps, pure Python🐍"
+description = "🐍Lightweight OTEL span to JSON converter, no deps, pure Python🐍"
 requires-python = ">=3.8"
 classifiers = [
     # FIXME Pure Python
