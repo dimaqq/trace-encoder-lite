@@ -5,6 +5,7 @@ description = "🐍Lightweight OTEL span to JSON converter, no dependencies, pur
 requires-python = ">=3.8"
 # https://github.com/astral-sh/uv/issues/4204
 # license = "MIT"
+readme = "readme.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
