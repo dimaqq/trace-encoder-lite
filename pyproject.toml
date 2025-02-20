@@ -38,5 +38,5 @@ dev = [
 ]
 testing = [
     "pytest ~= 8.3.4",
-    "opentelemetry-exporter-otlp-proto-http ~= 1.30",  # equivalence tests
+    "otlp-test-data ~= 0.9",
 ]
