@@ -374,7 +374,7 @@ wheels = [
 
 [[package]]
 name = "otlp-json"
-version = "0.9.0"
+version = "0.9.1"
 source = { virtual = "." }
 
 [package.dev-dependencies]
@@ -382,6 +382,7 @@ dev = [
     { name = "opentelemetry-api" },
     { name = "pyright" },
     { name = "ruff" },
+    { name = "typing-extensions" },
 ]
 testing = [
     { name = "otlp-test-data" },
@@ -395,6 +396,7 @@ dev = [
     { name = "opentelemetry-api", specifier = "~=1.30" },
     { name = "pyright", specifier = "~=1.1" },
     { name = "ruff", specifier = "~=0.9" },
+    { name = "typing-extensions", specifier = "~=4.12" },
 ]
 testing = [
     { name = "otlp-test-data", specifier = ">=0.9.3" },

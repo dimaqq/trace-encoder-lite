@@ -1,19 +1,21 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Sequence, TypeAlias, TYPE_CHECKING
+from typing import Any, Sequence, TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
+
     from opentelemetry.sdk.trace import ReadableSpan
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.sdk.util.instrumentation import InstrumentationScope
     from opentelemetry.trace.status import Status
 
+    _LEAF_VALUE: TypeAlias = str | int | float | bool  # TODO: confirm
+    _VALUE: TypeAlias = _LEAF_VALUE | Sequence[_LEAF_VALUE]
+
 
 CONTENT_TYPE = "application/json"
-
-_LEAF_VALUE: TypeAlias = str | int | float | bool  # TODO: confirm
-_VALUE: TypeAlias = _LEAF_VALUE | Sequence[_LEAF_VALUE]
 
 
 def encode_spans(spans: Sequence[ReadableSpan]) -> bytes:
