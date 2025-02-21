@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from opentelemetry.sdk.util.instrumentation import InstrumentationScope
     from opentelemetry.trace.status import Status
 
-    _LEAF_VALUE: TypeAlias = str | int | float | bool  # TODO: confirm
-    _VALUE: TypeAlias = _LEAF_VALUE | Sequence[_LEAF_VALUE]
+    _LEAF_VALUE: TypeAlias = "str | int | float | bool"  # TODO: confirm
+    _VALUE: TypeAlias = "_LEAF_VALUE | Sequence[_LEAF_VALUE]"
 
 
 CONTENT_TYPE = "application/json"
