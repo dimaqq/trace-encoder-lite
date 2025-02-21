@@ -2,7 +2,8 @@ version = 1
 revision = 1
 requires-python = ">=3.8"
 resolution-markers = [
-    "python_full_version >= '3.9'",
+    "python_full_version >= '3.13'",
+    "python_full_version >= '3.9' and python_full_version < '3.13'",
     "python_full_version < '3.9'",
 ]
 
@@ -396,23 +397,24 @@ dev = [
     { name = "ruff", specifier = "~=0.9" },
 ]
 testing = [
-    { name = "otlp-test-data", specifier = "~=0.9" },
+    { name = "otlp-test-data", specifier = ">=0.9.3" },
     { name = "pytest", specifier = "~=8.3.4" },
 ]
 
 [[package]]
 name = "otlp-test-data"
-version = "0.9.0"
+version = "0.9.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "freezegun" },
+    { name = "grpcio", marker = "python_full_version >= '3.13'" },
     { name = "opentelemetry-api" },
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-exporter-otlp-proto-http" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bd/eb/e6dd017d6cbdc529fa69a02a53171cadde9704f1e7392b7ff43f5919356d/otlp_test_data-0.9.0.tar.gz", hash = "sha256:0165a415df376e08545f66255647ab793b52779805606acd1aac8d7a4038c426", size = 3083 }
+sdist = { url = "https://files.pythonhosted.org/packages/2c/c0/793b9749aca93093f8ac0fe4834da272248d7b69c3e9d2978cd078235b69/otlp_test_data-0.9.3.tar.gz", hash = "sha256:6f000633f74bc72712e8e5fa8036c293bb51e8262c0f61f4d24396e52f6362f4", size = 3238 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/44/76/461b908c5a3afc1b05ae593d69001e800a163a5973d1460113ee7abc2bfd/otlp_test_data-0.9.0-py3-none-any.whl", hash = "sha256:b6871364bd35cc541fff8cd751786d1da31264e371d369e04c9b5f4633719030", size = 2885 },
+    { url = "https://files.pythonhosted.org/packages/c0/87/73601842eca2e28669b6fb2f43449d17d4ccd9232145dcf9fa79afc8a34a/otlp_test_data-0.9.3-py3-none-any.whl", hash = "sha256:49a35471189f288d90545b93e031d3b03415a1c2cdaa49711dc7deb50313dd65", size = 2938 },
 ]
 
 [[package]]
@@ -608,7 +610,8 @@ name = "urllib3"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.9'",
+    "python_full_version >= '3.13'",
+    "python_full_version >= '3.9' and python_full_version < '3.13'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/aa/63/e53da845320b757bf29ef6a9062f5c669fe997973f966045cb019c3f4b66/urllib3-2.3.0.tar.gz", hash = "sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d", size = 307268 }
 wheels = [
@@ -718,7 +721,8 @@ name = "zipp"
 version = "3.21.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.9'",
+    "python_full_version >= '3.13'",
+    "python_full_version >= '3.9' and python_full_version < '3.13'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3f/50/bad581df71744867e9468ebd0bcd6505de3b275e06f202c2cb016e3ff56f/zipp-3.21.0.tar.gz", hash = "sha256:2c9958f6430a2040341a52eb608ed6dd93ef4392e02ffe219417c1b28b5dd1f4", size = 24545 }
 wheels = [

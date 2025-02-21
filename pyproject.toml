@@ -38,5 +38,5 @@ dev = [
 ]
 testing = [
     "pytest ~= 8.3.4",
-    "otlp-test-data ~= 0.9",
+    "otlp-test-data >= 0.9.3",
 ]

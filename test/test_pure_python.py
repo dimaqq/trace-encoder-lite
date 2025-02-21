@@ -12,10 +12,6 @@ CONTENT_TYPE = "application/json"
 
 
 def test_equiv():
-    auth = json.loads(otlp_test_data.sample_json(otlp_test_data.Config()))
-    assert (
-        json.loads(
-            otlp_json.encode_spans(otlp_test_data.sample_spans(otlp_test_data.Config()))
-        )
-        == auth
-    )
+    auth = json.loads(otlp_test_data.sample_json())
+    mine = json.loads(otlp_json.encode_spans(otlp_test_data.sample_spans()))
+    assert mine == auth
