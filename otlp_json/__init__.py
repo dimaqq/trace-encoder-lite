@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Sequence, TYPE_CHECKING
+from collections.abc import Mapping, Sequence
+from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -16,6 +17,24 @@ if TYPE_CHECKING:
 
 
 CONTENT_TYPE = "application/json"
+
+
+_VALUE_TYPES = {
+    # NOTE: order matters, for isinstance(True, int).
+    bool: ("boolValue", bool),
+    int: ("intValue", str),
+    float: ("doubleValue", float),
+    bytes: ("bytesValue", bytes),
+    str: ("stringValue", str),
+    Sequence: (
+        "arrayValue",
+        lambda value: {"values": [_value(e) for e in _homogeneous_array(value)]},
+    ),
+    Mapping: (
+        "kvlistValue",
+        lambda value: {"values": [{k: _value(v) for k, v in value.items()}]},
+    ),
+}
 
 
 def encode_spans(spans: Sequence[ReadableSpan]) -> bytes:
@@ -47,36 +66,41 @@ def encode_spans(spans: Sequence[ReadableSpan]) -> bytes:
 
 
 def _resource(resource: Resource):
-    return {
-        "attributes": [
-            {"key": k, "value": _value(v)} for k, v in resource.attributes.items()
-        ]
-    }
+    rv = {"attributes": []}
+    for k, v in resource.attributes.items():
+        try:
+            rv["attributes"].append({"key": k, "value": _value(v)})
+        except ValueError:
+            pass
+
+    # NOTE: blocks that contain droppedAttributesCount:
+    # - Event
+    # - Link
+    # - InstrumentationScope
+    # - LogRecord (out of scope for this library)
+    # - Resource
+    if dropped := len(resource.attributes) - len(rv["attributes"]):
+        rv["dropped_attribute_count"] = dropped  # type: ignore
+
+    return rv
+
+
+def _homogeneous_array(value: list[_LEAF_VALUE]) -> list[_LEAF_VALUE]:
+    # TODO: empty lists are allowed, aren't they?
+    if len(types := {type(v) for v in value}) > 1:
+        raise ValueError(f"Attribute value arrays must be homogeneous, got {types=}")
+    return value
 
 
 def _value(value: _VALUE) -> dict[str, Any]:
     # Attribute value can be a primitive type, excluging None...
     # TODO: protobuf allows bytes, but I think OTLP doesn't.
     # TODO: protobuf allows k:v pairs, but I think OTLP doesn't.
-    if isinstance(value, (str, int, float, bool)):
-        k = {
-            # TODO: move these to module level
-            str: "stringValue",
-            int: "intValue",
-            float: "floatValue",
-            bool: "boolValue",
-        }[type(value)]
-        return {k: value}
+    for klass, (key, post) in _VALUE_TYPES.items():
+        if isinstance(value, klass):
+            return {key: post(value)}
 
-    # Or a homogenous array of a primitive type, excluding None.
-    value = list(value)
-
-    # TODO: empty lists are allowed, aren't they?
-    if len({type(v) for v in value}) > 1:
-        raise ValueError(f"Attribute value arrays must be homogenous, got {value}")
-
-    # TODO: maybe prevent recursion, OTEL doesn't allow lists of lists
-    return {"arrayValue": [_value(e) for e in value]}
+    raise ValueError(f"Cannot convert attribute of {type(value)=}")
 
 
 def _scope(scope: InstrumentationScope):
@@ -98,8 +122,22 @@ def _span(span: ReadableSpan):
         "endTimeUnixNano": str(span.end_time),  # -"-
         "status": _status(span.status),
     }
+
     if span.parent:
         rv["parentSpanId"] = _span_id(span.parent.span_id)
+
+    if span.attributes:
+        rv["attributes"] = []
+
+    for k, v in span.attributes.items():  # type: ignore
+        try:
+            rv["attributes"].append({"key": k, "value": _value(v)})
+        except ValueError:
+            pass
+
+    if dropped := len(span.attributes) - len(rv.get("attributes", ())):  # type: ignore
+        rv["dropped_attribute_count"] = dropped  # type: ignore
+
     return rv
 
 

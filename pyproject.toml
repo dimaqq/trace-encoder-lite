@@ -1,6 +1,6 @@
 [project]
 name = "otlp-json"
-version = "0.9.1"
+version = "0.9.2"
 description = "🐍Lightweight OTEL span to JSON converter, no dependencies, pure Python🐍"
 requires-python = ">=3.8"
 # https://github.com/astral-sh/uv/issues/4204
@@ -41,3 +41,7 @@ testing = [
     "pytest ~= 8.3.4",
     "otlp-test-data >= 0.9.3",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
