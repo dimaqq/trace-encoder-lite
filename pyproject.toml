@@ -30,6 +30,11 @@ classifiers = [
 ]
 dependencies = []
 
+[project.urls]
+"Repository" = "https://github.com/dimaqq/otlp-json"
+"Issues" = "https://github.com/dimaqq/otlp-json/issues"
+
+
 [dependency-groups]
 dev = [
     "opentelemetry-api ~= 1.30",  # 1.30 fixed type hints for Python 3.8

@@ -7,7 +7,7 @@ from typing import Any, TYPE_CHECKING
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-    from opentelemetry.sdk.trace import ReadableSpan
+    from opentelemetry.sdk.trace import ReadableSpan, Event
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.sdk.util.instrumentation import InstrumentationScope
     from opentelemetry.trace.status import Status
@@ -79,8 +79,13 @@ def _resource(resource: Resource):
     # - InstrumentationScope
     # - LogRecord (out of scope for this library)
     # - Resource
-    if dropped := len(resource.attributes) - len(rv["attributes"]):
-        rv["dropped_attribute_count"] = dropped  # type: ignore
+    rv["dropped_attributes_count"] = len(resource.attributes) - len(rv["attributes"])  # type: ignore
+
+    if not rv["attributes"]:
+        del rv["attributes"]
+
+    if not rv["dropped_attributes_count"]:
+        del rv["dropped_attributes_count"]
 
     return rv
 
@@ -117,17 +122,15 @@ def _span(span: ReadableSpan):
         "kind": span.kind.value or 1,  # unspecified -> internal
         "traceId": _trace_id(span.context.trace_id),
         "spanId": _span_id(span.context.span_id),
-        "flags": 0x100 | ([0, 0x200][bool(span.parent)]),
+        "flags": 0x100 | ([0, 0x200][bool(span.parent and span.parent.is_remote)]),
         "startTimeUnixNano": str(span.start_time),  # TODO: is it ever optional?
         "endTimeUnixNano": str(span.end_time),  # -"-
         "status": _status(span.status),
+        "attributes": [],
     }
 
     if span.parent:
         rv["parentSpanId"] = _span_id(span.parent.span_id)
-
-    if span.attributes:
-        rv["attributes"] = []
 
     for k, v in span.attributes.items():  # type: ignore
         try:
@@ -135,8 +138,16 @@ def _span(span: ReadableSpan):
         except ValueError:
             pass
 
-    if dropped := len(span.attributes) - len(rv.get("attributes", ())):  # type: ignore
-        rv["dropped_attribute_count"] = dropped  # type: ignore
+    rv["dropped_attributes_count"] = len(span.attributes) - len(rv["attributes"])  # type: ignore
+
+    if not rv["attributes"]:
+        del rv["attributes"]
+
+    if not rv["dropped_attributes_count"]:
+        del rv["dropped_attributes_count"]
+
+    if span.events:
+        rv["events"] = [_event(e) for e in span.events]
 
     return rv
 
@@ -156,3 +167,27 @@ def _span_id(span_id: int) -> str:
 def _status(status: Status) -> dict[str, Any]:
     # FIXME
     return {}
+
+
+def _event(event: Event) -> dict[str, Any]:
+    rv = {
+        "name": event.name,
+        "timeUnixNano": str(event.timestamp),
+        "attributes": [],
+    }
+
+    for k, v in event.attributes.items():  # type: ignore
+        try:
+            rv["attributes"].append({"key": k, "value": _value(v)})
+        except ValueError:
+            pass
+
+    rv["dropped_attributes_count"] = len(event.attributes) - len(rv["attributes"])  # type: ignore
+
+    if not rv["attributes"]:
+        del rv["attributes"]
+
+    if not rv["dropped_attributes_count"]:
+        del rv["dropped_attributes_count"]
+
+    return rv
