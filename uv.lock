@@ -374,7 +374,7 @@ wheels = [
 
 [[package]]
 name = "otlp-json"
-version = "0.9.2"
+version = "0.9.3"
 source = { editable = "." }
 
 [package.dev-dependencies]
@@ -405,7 +405,7 @@ testing = [
 
 [[package]]
 name = "otlp-test-data"
-version = "0.11.0"
+version = "0.11.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "freezegun" },
@@ -414,9 +414,9 @@ dependencies = [
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-exporter-otlp-proto-http" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/70/c9/bb8de92ae3eea7ba501e38661270d505ec094453fcfaa6d4aa1da120fc8f/otlp_test_data-0.11.0.tar.gz", hash = "sha256:01855e4d84afa76a33457594c30023b1e33accdcf8aaef4611159274f2dd66c3", size = 37638 }
+sdist = { url = "https://files.pythonhosted.org/packages/df/d7/21bed69e7f201abbdb27bf84bea1a02f65991efc60d88aaeb4001c9069ad/otlp_test_data-0.11.2.tar.gz", hash = "sha256:6be622eaa675e08568d140ce0863f0dfbf3eeb7dd1b567d66633ddd79d4d9632", size = 37707 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/28/b3/464748f40e489fc335c2d01147c0cbbe19eb2ec2ab95bdb6b33b74649ea4/otlp_test_data-0.11.0-py3-none-any.whl", hash = "sha256:254955385a4ee1fc30b8514c08600f65b8b7dca55073b6cbdca555c02c533e8b", size = 3373 },
+    { url = "https://files.pythonhosted.org/packages/4c/62/462acb3181f178832c286e8b6f9787a6983dd5bdd9588564624a861db837/otlp_test_data-0.11.2-py3-none-any.whl", hash = "sha256:419190181f221d611d24dba8850e980d69bc7e1195bd36f0c4e5ec6a3bcdcc7e", size = 3584 },
 ]
 
 [[package]]
@@ -457,15 +457,15 @@ wheels = [
 
 [[package]]
 name = "pyright"
-version = "1.1.394"
+version = "1.1.395"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "nodeenv" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/e4/79f4d8a342eed6790fdebdb500e95062f319ee3d7d75ae27304ff995ae8c/pyright-1.1.394.tar.gz", hash = "sha256:56f2a3ab88c5214a451eb71d8f2792b7700434f841ea219119ade7f42ca93608", size = 3809348 }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/47/a2e1dfd70f9f0db34f70d5b108c82be57bf24185af69c95acff57f9239fa/pyright-1.1.395.tar.gz", hash = "sha256:53703169068c160bfb41e1b44ba3e2512492869c26cfad927e1268cb3fbb1b1c", size = 3813566 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d6/4c/50c74e3d589517a9712a61a26143b587dba6285434a17aebf2ce6b82d2c3/pyright-1.1.394-py3-none-any.whl", hash = "sha256:5f74cce0a795a295fb768759bbeeec62561215dea657edcaab48a932b031ddbb", size = 5679540 },
+    { url = "https://files.pythonhosted.org/packages/5f/a1/531897f8caa6c6cc99862cd1c908ddd8a366a51d968e83ab4523ded98b30/pyright-1.1.395-py3-none-any.whl", hash = "sha256:f9bc726870e740c6c77c94657734d90563a3e9765bb523b39f5860198ed75eef", size = 5688787 },
 ]
 
 [[package]]
