@@ -18,25 +18,12 @@ if TYPE_CHECKING:
     _VALUE: TypeAlias = "_LEAF_VALUE | Sequence[_LEAF_VALUE]"
 
 
+__all__ = [
+    "CONTENT_TYPE",
+    "encode_spans",
+]
+
 CONTENT_TYPE = "application/json"
-
-
-_VALUE_TYPES = {
-    # NOTE: order matters, for isinstance(True, int).
-    bool: ("boolValue", bool),
-    int: ("intValue", str),
-    float: ("doubleValue", float),
-    bytes: ("bytesValue", bytes),
-    str: ("stringValue", str),
-    Sequence: (
-        "arrayValue",
-        lambda value: {"values": [_value(e) for e in _homogeneous_array(value)]},
-    ),
-    Mapping: (
-        "kvlistValue",
-        lambda value: {"values": [{k: _value(v) for k, v in value.items()}]},
-    ),
-}
 
 
 def encode_spans(spans: Sequence[ReadableSpan]) -> bytes:
@@ -93,23 +80,32 @@ def _attributes(
     return rv
 
 
-def _homogeneous_array(value: list[_LEAF_VALUE]) -> list[_LEAF_VALUE]:
+def _ensure_homogeneous(value: Sequence[_LEAF_VALUE]) -> Sequence[_LEAF_VALUE]:
     # TODO: empty lists are allowed, aren't they?
     if len(types := {type(v) for v in value}) > 1:
         raise ValueError(f"Attribute value arrays must be homogeneous, got {types=}")
     return value
 
 
-def _value(value: _VALUE) -> dict[str, Any]:
-    # Attribute value can be a primitive type, excluging None...
-    # protobuf allows bytes, but I think OTLP spec does not?
-    # protobuf allows k:v pairs, but I think OTLP doesn't.
-    # TODO: read up the spec and validate the allowed type range.
-    for klass, (key, post) in _VALUE_TYPES.items():
-        if isinstance(value, klass):
-            return {key: post(value)}
+def _value(v: _VALUE) -> dict[str, Any]:
+    if isinstance(v, bool):
+        return {"boolValue": bool(v)}
+    if isinstance(v, int):
+        return {"intValue": str(int(v))}
+    if isinstance(v, float):
+        return {"doubleValue": float(v)}
+    if isinstance(v, bytes):
+        return {
+            "bytesValue": bytes(v)
+        }  # FIXME this can't be right; gotta encode this somehow
+    if isinstance(v, str):
+        return {"stringValue": str(v)}
+    if isinstance(v, Sequence):
+        return {"arrayValue": {"values": [_value(e) for e in _ensure_homogeneous(v)]}}
+    if isinstance(v, Mapping):
+        return {"kvlistValue": {"values": [{k: _value(vv) for k, vv in v.items()}]}}
 
-    raise ValueError(f"Cannot convert attribute of {type(value)=}")
+    raise ValueError(f"Cannot convert attribute value of {type(v)=}")
 
 
 def _scope(scope: InstrumentationScope):
