@@ -118,6 +118,10 @@ def _scope(scope: InstrumentationScope):
     return rv
 
 
+_REMOTE = 0x300
+_LOCAL = 0x100
+
+
 def _span(span: ReadableSpan):
     assert span.context
     rv = {
@@ -125,7 +129,7 @@ def _span(span: ReadableSpan):
         "kind": span.kind.value or 1,  # unspecified -> internal
         "traceId": _trace_id(span.context.trace_id),
         "spanId": _span_id(span.context.span_id),
-        "flags": 0x100 | ([0, 0x200][bool(span.parent and span.parent.is_remote)]),
+        "flags": _REMOTE if span.parent and span.parent.is_remote else _LOCAL,
         "startTimeUnixNano": str(span.start_time),
         "endTimeUnixNano": str(span.end_time),  # can this be unset?
         "status": _status(span.status),
@@ -155,8 +159,10 @@ def _span_id(span_id: int) -> str:
 
 
 def _status(status: Status) -> dict[str, Any]:
-    # FIXME: need an example of bad status
-    return {}
+    rv = {}
+    # rv["code"] ...
+    # rv["message"] = ...
+    return rv
 
 
 def _event(event: Event) -> dict[str, Any]:
