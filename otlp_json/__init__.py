@@ -27,23 +27,42 @@ CONTENT_TYPE = "application/json"
 
 
 def encode_spans(spans: Sequence[ReadableSpan]) -> bytes:
-    spans = sorted(spans, key=lambda s: (id(s.resource), id(s.instrumentation_scope)))
+    resource_cache: dict[Resource, tuple] = {}
+    scope_cache: dict[InstrumentationScope, tuple] = {}
+
+    def linearise(span: ReadableSpan):
+        r = span.resource
+        if r not in resource_cache:
+            resource_cache[r] = (r.schema_url, tuple(r.attributes.items()))
+        s = span.instrumentation_scope
+        assert s
+        assert s.attributes is not None
+        if s not in scope_cache:
+            scope_cache[s] = (
+                s.schema_url,
+                s.name,
+                s.version,
+                tuple(s.attributes.items()),
+            )
+        return (resource_cache[r], scope_cache[s])
+
+    spans = sorted(spans, key=linearise)
     rv = {"resourceSpans": []}
-    last_rs = last_is = None
+    last_resource = last_scope = None
     for span in spans:
         assert span.resource
         assert span.instrumentation_scope
-        if span.resource is not last_rs:
-            last_rs = span.resource
-            last_is = None
+        if span.resource != last_resource:
+            last_resource = span.resource
+            last_scope = None
             rv["resourceSpans"].append(
                 {
                     "resource": _resource(span.resource),
                     "scopeSpans": [],
                 }
             )
-        if span.instrumentation_scope is not last_is:
-            last_is = span.instrumentation_scope
+        if span.instrumentation_scope != last_scope:
+            last_scope = span.instrumentation_scope
             rv["resourceSpans"][-1]["scopeSpans"].append(
                 {
                     "scope": _scope(span.instrumentation_scope),
@@ -111,7 +130,10 @@ def _value(v: _VALUE) -> dict[str, Any]:
 def _scope(scope: InstrumentationScope):
     rv = {
         "name": scope.name,
-        **_attributes(scope),
+        # Upstream code for attrs and schema has landed, but wasn't released yet
+        # https://github.com/open-telemetry/opentelemetry-python/pull/4359
+        # "schema_url": scope.schema_url,  # check if it may be null
+        # **_attributes(scope),
     }
     if scope.version:
         rv["version"] = scope.version
@@ -160,8 +182,10 @@ def _span_id(span_id: int) -> str:
 
 def _status(status: Status) -> dict[str, Any]:
     rv = {}
-    # rv["code"] ...
-    # rv["message"] = ...
+    if status.status_code.value:
+        rv["code"] = status.status_code.value
+    if status.description:
+        rv["message"] = status.description
     return rv
 
 
