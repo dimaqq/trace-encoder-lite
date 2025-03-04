@@ -117,9 +117,7 @@ def _value(v: _VALUE) -> dict[str, Any]:
         # FIXME: not reached!
         # The API/SDK coerces bytes to str or drops the attribute, see comment in:
         # https://github.com/open-telemetry/opentelemetry-python/issues/4118
-        return {
-            "bytesValue": bytes(v)
-        }  # FIXME this can't be right; gotta encode this somehow
+        return {"bytesValue": bytes(v).hex()}
     if isinstance(v, str):
         return {"stringValue": str(v)}
     if isinstance(v, Sequence):

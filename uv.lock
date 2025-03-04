@@ -374,7 +374,7 @@ wheels = [
 
 [[package]]
 name = "otlp-json"
-version = "0.9.6"
+version = "0.9.7"
 source = { editable = "." }
 
 [package.dev-dependencies]
