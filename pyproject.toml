@@ -1,6 +1,6 @@
 [project]
 name = "otlp-json"
-version = "0.9.5"
+version = "0.9.6"
 description = "🐍Lightweight OTEL span to JSON converter, no dependencies, pure Python🐍"
 requires-python = ">=3.8"
 # https://github.com/astral-sh/uv/issues/4204
